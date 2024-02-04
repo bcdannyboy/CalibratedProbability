@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Tooltip from './Tooltip';
 
 function decodeHtml(html) {
   if (typeof window === "undefined") {
@@ -9,23 +10,77 @@ function decodeHtml(html) {
   return txt.value;
 }
 
-const ResultModal = ({ correctPercentage, averageConfidence, correctConfidence, wrongConfidence, onRestart }) => (
-  <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-    <div className="bg-white p-5 rounded-lg shadow-lg text-center">
-      <h2 className="font-bold text-xl mb-4">Quiz Results</h2>
-      <p>Average Confidence: {averageConfidence}%</p>
-      <p>Correct Answers: {correctPercentage}%</p>
-      <p>Confidence for Correct Answers: {correctConfidence}%</p>
-      <p>Confidence for Wrong Answers: {wrongConfidence}%</p>
-      <button
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-300"
-        onClick={onRestart}
-      >
-        Retake Test
-      </button>
+const strategiesTips = {
+  "Decomposition": "Break down a complex question into simpler parts to better assess its truth.",
+  "Avoiding Anchoring": "Consider different angles of the question before settling on your initial impression.",
+  "Equivalent Bets": "Think of what you would bet on the outcome being true or false.",
+  "Feedback and Record Keeping": "Reflect on previous questions where your confidence was misplaced.",
+  "Overconfidence Calibration": "Adjust your confidence level if you feel too certain without strong evidence.",
+  "Scenario Analysis": "Imagine scenarios where the statement could be true and false.",
+  "Seeking Disconfirming Evidence": "Actively look for information that could prove the statement wrong.",
+  "Diverse Viewpoints": "Consider how someone with a different perspective might view the statement."
+};
+
+const ResultModal = ({ correctPercentage, averageConfidence, correctConfidence, wrongConfidence, onRestart }) => {
+  // Determine performance type
+  const performanceType = averageConfidence > correctPercentage ? "overconfident" : "underconfident";
+
+  // Generate feedback based on performance
+  const generateFeedback = () => {
+    if (performanceType === "overconfident") {
+      return (
+        <>
+          <h1 className="font-bold text-xl mt-4 text-center">Feedback</h1>
+          <h2 className="font-bold text-lg mt-4 text-center">You may be over-confident</h2>
+          <p className="text-center">Over-confidence can lead to poor decision-making and missed learning opportunities.<br/>Consider these strategies to improve your performance:</p>
+          <br/>
+          <ul className="text-left ml-12">
+            <li style={{ listStyleType: "disc" }}>{strategiesTips["Feedback and Record Keeping"]}</li>
+            <li style={{ listStyleType: "disc" }}>{strategiesTips["Overconfidence Calibration"]}</li>
+            <li style={{ listStyleType: "disc" }}>{strategiesTips["Seeking Disconfirming Evidence"]}</li>
+          </ul>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <h1 className="font-bold text-xl mt-4 text-center">Feedback</h1>
+          <h2 className="font-bold text-lg mt-4 text-center">You may be under-confident</h2>
+          <p className="text-center">Under-confidence can lead to missed opportunities and a lack of assertiveness.<br/>Consider these strategies to improve your performance:</p>
+          <br/>
+          <ul className="text-left ml-12">
+            <li style={{ listStyleType: "disc" }}>{strategiesTips["Decomposition"]}</li>
+            <li style={{ listStyleType: "disc" }}>{strategiesTips["Scenario Analysis"]}</li>
+            <li style={{ listStyleType: "disc" }}>{strategiesTips["Diverse Viewpoints"]}</li>
+          </ul>
+        </>
+      );
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-5 rounded-lg shadow-lg text-center">
+        <h2 className="font-bold text-xl mb-4">Quiz Results</h2>
+        <p>Average Confidence: {averageConfidence}%</p>
+        <p>Correct Answers: {correctPercentage}%</p>
+        <p>Confidence for Correct Answers: {correctConfidence}%</p>
+        <p>Confidence for Wrong Answers: {wrongConfidence}%</p>
+        {/* Feedback Section */}
+        <div className="mt-4 text-left">
+          {generateFeedback()}
+        </div>
+        <button
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition duration-300"
+          onClick={onRestart}
+        >
+          Retake Test
+        </button>
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
 
 const App = () => {
   const [questions, setQuestions] = useState([]);
@@ -57,7 +112,7 @@ const App = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="border p-8 max-w-4xl w-full rounded-lg shadow-lg bg-white">
-          <h1 className="text-4xl font-bold mb-4 text-center">Welcome to the Calibrated Probability Assessment Quiz!</h1>
+          <h1 className="text-4xl font-bold mb-4 text-center">Welcome to the Calibrated Probability Assessment!</h1>
           <p className="mb-4 text-left">This quiz will help you assess how well you can predict the correct answer and how confident you are in your predictions.</p>
           <p className="mb-4 text-left">Calibrated probability assessments provide a powerful tool for enhancing the accuracy of subjective probability estimates, crucial in fields like cybersecurity and risk management. This method improves decision-making by allowing individuals to refine their estimates based on real outcomes, moving from guesswork to a more objective understanding of uncertainties. It offers a disciplined approach to dealing with uncertainty, significantly benefiting areas where precise risk evaluation is essential. Through continuous learning and adjustment, calibrated probabilities help in better anticipating and mitigating potential threats, thereby elevating the quality of decisions in high-stakes environments.</p>
           <h2 className="text-2xl font-bold mb-4 text-center">Instructions</h2>
@@ -74,7 +129,8 @@ const App = () => {
             <li><strong>Seeking Disconfirming Evidence:</strong> Look for information that contradicts your current beliefs to mitigate confirmation bias.</li>
             <li><strong>Diverse Viewpoints:</strong> Incorporate perspectives from a variety of sources to improve the accuracy of your probability estimates.</li>
           </ul>
-          <p className="mb-4 text-left">Click the button below to start the quiz.</p>
+          <br/>
+          <p className="mb-4 text-center">Click the button below to start the test.</p>
           <div className="flex justify-center">
           <button
             className="px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-700 transition duration-300"
@@ -132,7 +188,9 @@ const App = () => {
           {questions && questions.length > 0 ? (
             questions.map((question, index) => (
               <div key={index} className="mb-6">
-                <p className="text-lg font-semibold mb-2">{`${index + 1}. ${question.question}`}</p>
+                <p className="text-lg font-semibold mb-2">
+                  {`${index + 1}. ${question.question}`}
+                </p>
                 <div className="flex justify-center items-center space-x-2">
                   <button
                     className={`px-4 py-2 rounded-md transition duration-300 ${answers[question.question]?.answer === 'True' ? 'bg-blue-700 text-white' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
@@ -164,6 +222,7 @@ const App = () => {
                       <option key={val} value={val}>{val}%</option>
                     ))}
                   </select>
+                  <Tooltip message={strategiesTips[Object.keys(strategiesTips)[index % Object.keys(strategiesTips).length]]} />
                 </div>
               </div>
             ))
