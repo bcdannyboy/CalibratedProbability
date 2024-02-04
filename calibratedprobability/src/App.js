@@ -92,7 +92,7 @@ const App = () => {
 
   useEffect(() => {
     if (testStarted) { // Fetch questions only after test starts
-      fetch('https://opentdb.com/api.php?amount=10&type=boolean')
+      fetch('https://opentdb.com/api.php?amount=30&type=boolean')
         .then((res) => res.json())
         .then(data => {
           const decodedQuestions = data.results.map((question) => ({
@@ -113,7 +113,9 @@ const App = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
         <div className="border p-8 max-w-4xl w-full rounded-lg shadow-lg bg-white">
-          <h1 className="text-4xl font-bold mb-4 text-center">Welcome to the Calibrated Probability Assessment!</h1>
+          <h2 className="text-3xl font-bold text-center">Welcome to The</h2>
+          <h1 className="text-4xl font-bold text-center">Calibrated Probability Assessment</h1>
+          <h2 className="text-3xl font-bold mb-4 text-center">Training Utility</h2>
           <p className="mb-4 text-left">This quiz will help you assess how well you can predict the correct answer and how confident you are in your predictions.</p>
           <p className="mb-4 text-left">Calibrated probability assessments provide a powerful tool for enhancing the accuracy of subjective probability estimates, crucial in fields like cybersecurity and risk management. This method improves decision-making by allowing individuals to refine their estimates based on real outcomes, moving from guesswork to a more objective understanding of uncertainties. It offers a disciplined approach to dealing with uncertainty, significantly benefiting areas where precise risk evaluation is essential. Through continuous learning and adjustment, calibrated probabilities help in better anticipating and mitigating potential threats, thereby elevating the quality of decisions in high-stakes environments.</p>
           <h2 className="text-2xl font-bold mb-4 text-center">Instructions</h2>
@@ -181,6 +183,10 @@ const App = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <Helmet>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://pagead2.googlesyndication.com; style-src 'self' 'unsafe-inline';" />
+      </Helmet>
+
       <Helmet>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-your-client-id" crossOrigin="anonymous"></script>
         <script>
