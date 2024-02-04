@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Tooltip from './Tooltip';
+import { Helmet } from 'react-helmet-async';
 
 function decodeHtml(html) {
   if (typeof window === "undefined") {
@@ -151,21 +152,26 @@ const App = () => {
     const totalQuestions = questions.length;
     const totalConfidence = Object.values(answers).reduce((acc, curr) => acc + Number(curr.confidence), 0);
     const averageConfidence = (totalConfidence / totalQuestions).toFixed(2);
+  
+    // Ensure calculations for confidence do not exceed 100%
     const correctConfidenceSum = Object.values(answers).filter((a, i) => questions[i].correct_answer === a.answer).reduce((acc, curr) => acc + Number(curr.confidence), 0);
     const wrongConfidenceSum = Object.values(answers).filter((a, i) => questions[i].correct_answer !== a.answer).reduce((acc, curr) => acc + Number(curr.confidence), 0);
+  
+    // Calculate average confidence for correct and wrong answers separately
     const correctConfidence = correctAnswersCount > 0 ? (correctConfidenceSum / correctAnswersCount).toFixed(2) : "0.00";
     const wrongAnswersCount = totalQuestions - correctAnswersCount;
     const wrongConfidence = wrongAnswersCount > 0 ? (wrongConfidenceSum / wrongAnswersCount).toFixed(2) : "0.00";
-
+  
     setResultData({
       averageConfidence,
       correctPercentage: ((correctAnswersCount / totalQuestions) * 100).toFixed(2),
       correctConfidence,
       wrongConfidence,
     });
-
+  
     setShowResult(true);
   };
+  
 
   const handleRestart = () => {
     window.location.reload();
@@ -175,6 +181,21 @@ const App = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <Helmet>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-your-client-id" crossOrigin="anonymous"></script>
+        <script>
+          {`
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          `}
+        </script>
+      </Helmet>
+      {/* Ad container on the left */}
+      {/* <div className="adsbygoogle ad-container" style={{ position: 'fixed', left: 0, top: '50%', transform: 'translateY(-50%)' }}
+          data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+          data-ad-slot="yyyyyyyyyy"
+          data-ad-format="auto"
+          data-full-width-responsive="true">
+      </div> */}
       {showResult ? (
         <ResultModal
           correctPercentage={resultData.correctPercentage}
@@ -240,6 +261,13 @@ const App = () => {
           </div>
         </div>
       )}
+      {/* Ad container on the right */}
+      {/* <div className="adsbygoogle ad-container" style={{ position: 'fixed', right: 0, top: '50%', transform: 'translateY(-50%)' }}
+          data-ad-client="ca-pub-xxxxxxxxxxxxxxxx"
+          data-ad-slot="yyyyyyyyyy"
+          data-ad-format="auto"
+          data-full-width-responsive="true">
+      </div> */}
     </div>
   );
 };
